@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bibek Poudel — Cybersecurity Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #020a0f;
+  --panel: #071520;
+  --accent: #00ffe1;
+  --accent2: #0077ff;
+  --text: #c8e8f0;
+  --text-dim: #4a7a8a;
+  --border: rgba(0,255,225,0.15);
+  --glow: 0 0 20px rgba(0,255,225,0.35);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); font-family: 'Rajdhani', sans-serif; color: var(--text); cursor: crosshair; }
+
+.grid-bg { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(0,255,225,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,225,0.04) 1px, transparent 1px); background-size: 44px 44px; pointer-events: none; }
+.scanlines { position: fixed; inset: 0; z-index: 1; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px); pointer-events: none; }
+
+/* SIDE NAV */
+#sidenav { position: fixed; left: 0; top: 0; bottom: 0; width: 70px; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-right: 1px solid var(--border); background: rgba(2,10,15,0.92); backdrop-filter: blur(10px); }
+.nav-logo { position: absolute; top: 22px; font-family: 'Orbitron', monospace; font-size: 9px; font-weight: 900; color: var(--accent); letter-spacing: 2px; writing-mode: vertical-rl; text-shadow: var(--glow); }
+.nav-btn { width: 44px; height: 44px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); font-family: 'Share Tech Mono', monospace; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; transition: all 0.3s; position: relative; }
+.nav-btn .ni { font-size: 15px; }
+.nav-btn .nl { font-size: 7px; letter-spacing: 1px; }
+.nav-btn:hover, .nav-btn.active { border-color: var(--accent); color: var(--accent); box-shadow: var(--glow); background: rgba(0,255,225,0.05); }
+.nav-btn.active::before { content: ''; position: absolute; left: -1px; top: 0; bottom: 0; width: 3px; background: var(--accent); box-shadow: var(--glow); }
+
+/* APP */
+#app { position: fixed; left: 70px; top: 0; right: 0; bottom: 32px; overflow: hidden; }
+
+/* PAGES */
+.page { position: absolute; inset: 0; overflow-y: auto; padding: 56px 60px 60px; opacity: 0; pointer-events: none; transform: translateX(36px); transition: opacity 0.4s cubic-bezier(.4,0,.2,1), transform 0.4s cubic-bezier(.4,0,.2,1); }
+.page.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+.page.exit { opacity: 0; transform: translateX(-36px); }
+
+/* PAGE HEADER */
+.page-num { font-family: 'Share Tech Mono', monospace; font-size: 90px; font-weight: 700; color: rgba(0,255,225,0.05); line-height: 1; position: absolute; top: 30px; right: 60px; pointer-events: none; }
+.page-tag { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; }
+.page-title { font-family: 'Orbitron', monospace; font-size: clamp(26px, 4vw, 46px); font-weight: 900; color: #fff; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 40px rgba(0,255,225,0.15); }
+.title-line { width: 56px; height: 2px; background: var(--accent); box-shadow: var(--glow); margin-top: 14px; margin-bottom: 48px; }
+
+/* HOME */
+#page-home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   /* vertical center */
+  align-items: center;       /* horizontal center */
+  text-align: center;
+  min-height: 100%;
+
+  /* IMPORTANT: push content away from sidebar */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+.status-pill { position: absolute; top: 28px; right: 60px; display: flex; align-items: center; gap: 10px; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 2px; border: 1px solid var(--border); padding: 8px 16px; background: rgba(0,255,225,0.04); }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: var(--glow); animation: blink 1.8s infinite; }
+.hero-eyebrow { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 5px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; min-height: 20px; }
+.hero-eyebrow::before { content: ''; display: block; width: 36px; height: 1px; background: var(--accent); box-shadow: var(--glow); flex-shrink: 0; }
+.hero-name { font-family: 'Orbitron', monospace; font-size: clamp(38px, 7vw, 86px); font-weight: 900; line-height: 1; color: #fff; margin-bottom: 8px; animation: slideUp 0.7s ease both; }
+.hero-name span { color: var(--accent); text-shadow: var(--glow); }
+.hero-role { font-family: 'Rajdhani', sans-serif; font-size: clamp(15px, 2vw, 21px); font-weight: 300; letter-spacing: 7px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 34px; animation: slideUp 0.7s 0.1s ease both; }
+.hero-summary { max-width: 540px; font-size: 16px; color: #8ab4c0; line-height: 1.9; border-left: 2px solid var(--accent); padding-left: 22px; margin-bottom: 44px; animation: slideUp 0.7s 0.2s ease both; }
+.hero-btns { display: flex; gap: 14px; flex-wrap: wrap; animation: slideUp 0.7s 0.3s ease both; }
+.btn { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; padding: 12px 28px; border: 1px solid var(--accent); color: var(--accent); background: transparent; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+.btn::before { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-101%); transition: transform 0.3s; z-index: 0; }
+.btn span { position: relative; z-index: 1; }
+.btn:hover { color: var(--bg); }
+.btn:hover::before { transform: translateX(0); }
+.btn-dim { border-color: var(--text-dim); color: var(--text-dim); }
+.btn-dim::before { background: var(--text-dim); }
+.btn-dim:hover { color: var(--bg); }
+.home-stats { display: flex; gap: 0; margin-top: 52px; border: 1px solid var(--border); background: var(--panel); width: fit-content; }
+.stat { padding: 18px 32px; border-right: 1px solid var(--border); text-align: center; }
+.stat:last-child { border-right: none; }
+.stat-num { font-family: 'Orbitron', monospace; font-size: 26px; font-weight: 700; color: var(--accent); line-height: 1; }
+.stat-label { font-family: 'Share Tech Mono', monospace; font-size: 8px; color: var(--text-dim); letter-spacing: 2px; margin-top: 5px; }
+
+/* ABOUT */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2px; }
+.about-cell { background: var(--panel); padding: 30px 34px; }
+.cell-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+.cell-value { font-size: 17px; font-weight: 600; color: #fff; line-height: 1.4; }
+.cell-sub { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); margin-top: 5px; letter-spacing: 1px; }
+.objective-box { background: var(--panel); border: 1px solid var(--border); padding: 38px; position: relative; overflow: hidden; }
+.objective-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2), transparent); }
+.objective-box p { font-size: 17px; line-height: 2; color: #9ec8d4; font-weight: 300; }
+.corner-tag { position: absolute; bottom: 14px; right: 18px; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 2px; }
+
+/* EDUCATION */
+.edu-timeline { position: relative; padding-left: 40px; }
+.edu-timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 1px; background: linear-gradient(180deg, var(--accent), transparent); }
+.edu-item { position: relative; margin-bottom: 44px; }
+.edu-item::before { content: ''; position: absolute; left: -36px; top: 6px; width: 12px; height: 12px; border: 2px solid var(--accent); background: var(--bg); box-shadow: var(--glow); }
+.edu-year { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 3px; margin-bottom: 12px; }
+.edu-card { background: var(--panel); border: 1px solid var(--border); padding: 34px 38px; position: relative; overflow: hidden; transition: border-color 0.3s; }
+.edu-card:hover { border-color: rgba(0,255,225,0.4); }
+.edu-card::after { content: ''; position: absolute; bottom: 0; left: 0; height: 2px; width: 0; background: var(--accent); transition: width 0.4s; }
+.edu-card:hover::after { width: 100%; }
+.edu-degree { font-family: 'Orbitron', monospace; font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 2px; margin-bottom: 8px; }
+.edu-inst { font-size: 15px; color: var(--text); font-weight: 500; margin-bottom: 4px; }
+.edu-affil { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 24px; }
+.edu-mod-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 3px; margin-bottom: 12px; text-transform: uppercase; }
+.edu-modules { display: flex; flex-wrap: wrap; gap: 8px; }
+.mod-chip { font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 5px 14px; border: 1px solid var(--border); color: var(--text-dim); letter-spacing: 1px; transition: all 0.2s; }
+.edu-card:hover .mod-chip { border-color: rgba(0,255,225,0.3); color: var(--text); }
+
+/* SKILLS */
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2px; background: var(--border); border: 1px solid var(--border); }
+.skill-card { background: var(--panel); padding: 30px 26px; transition: background 0.3s; position: relative; overflow: hidden; }
+.skill-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--accent); transition: width 0.4s; }
+.skill-card:hover { background: #081d2a; }
+.skill-card:hover::after { width: 100%; }
+.skill-icon { font-size: 24px; margin-bottom: 12px; }
+.skill-cat { font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.stag { font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 4px 10px; border: 1px solid var(--border); color: var(--text-dim); letter-spacing: 1px; transition: all 0.2s; }
+.skill-card:hover .stag { border-color: rgba(0,255,225,0.3); color: var(--text); }
+.soft-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); border: 1px solid var(--border); margin-top: 2px; }
+.soft-item { background: var(--panel); padding: 26px 30px; display: flex; align-items: center; gap: 16px; transition: background 0.3s; }
+.soft-item:hover { background: #081d2a; }
+.soft-n { font-family: 'Orbitron', monospace; font-size: 18px; font-weight: 700; color: var(--accent); opacity: 0.3; flex-shrink: 0; width: 26px; }
+.soft-t { font-size: 15px; font-weight: 500; color: var(--text); }
+
+/* CERTS */
+.certs-list { display: flex; flex-direction: column; gap: 2px; background: var(--border); border: 1px solid var(--border); }
+.cert-row { background: var(--panel); display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 26px; padding: 26px 34px; transition: all 0.3s; position: relative; overflow: hidden; }
+.cert-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); transform: scaleY(0); transition: transform 0.3s; transform-origin: bottom; }
+.cert-row:hover { background: #081d2a; padding-left: 42px; }
+.cert-row:hover::before { transform: scaleY(1); }
+.cert-badge { width: 52px; height: 52px; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', monospace; font-size: 8px; font-weight: 700; color: var(--accent); letter-spacing: 1px; box-shadow: var(--glow); flex-shrink: 0; text-align: center; }
+.cert-name { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 600; color: #fff; }
+.cert-detail { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); margin-top: 4px; letter-spacing: 1px; }
+.cert-status { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 2px; text-align: right; flex-shrink: 0; }
+
+/* CONTACT / HOST */
+.contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2px; background: var(--border); border: 1px solid var(--border); margin-bottom: 32px; }
+.contact-card { background: var(--panel); padding: 32px 26px; display: flex; flex-direction: column; gap: 11px; transition: background 0.3s; position: relative; overflow: hidden; text-decoration: none; }
+.contact-card::after { content: ''; position: absolute; bottom: 0; left: 0; height: 2px; width: 0; background: var(--accent); transition: width 0.4s; }
+.contact-card:hover { background: #081d2a; }
+.contact-card:hover::after { width: 100%; }
+.c-icon { font-size: 26px; }
+.c-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--accent); letter-spacing: 3px; }
+.c-value { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600; color: var(--text); }
+
+.github-guide { background: var(--panel); border: 1px solid var(--border); padding: 38px; position: relative; overflow: hidden; }
+.github-guide::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, var(--accent2), var(--accent), transparent); }
+.guide-title { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 700; color: var(--accent2); letter-spacing: 3px; margin-bottom: 26px; }
+.steps { display: flex; flex-direction: column; }
+.step { display: grid; grid-template-columns: 38px 1fr; gap: 18px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--border); }
+.step:last-child { border-bottom: none; }
+.step-num { font-family: 'Orbitron', monospace; font-size: 17px; font-weight: 700; color: var(--accent); opacity: 0.5; line-height: 1.3; }
+.step-title { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.step-desc { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); line-height: 1.8; letter-spacing: 0.5px; }
+.step-desc code { color: var(--accent); background: rgba(0,255,225,0.08); padding: 1px 6px; font-size: 11px; }
+
+/* BOTTOM BAR */
+#bottombar { position: fixed; bottom: 0; left: 70px; right: 0; height: 32px; background: rgba(2,10,15,0.92); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 22px; gap: 22px; z-index: 100; }
+.bar-item { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 2px; display: flex; align-items: center; gap: 6px; }
+.bar-item span { color: var(--accent); }
+.bar-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 2s infinite; }
+
+/* TRANSITION OVERLAY */
+#overlay { position: fixed; inset: 0; z-index: 999; background: var(--accent); transform: scaleX(0); transform-origin: left; pointer-events: none; }
+
+/* ANIMATIONS */
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.cursor { display: inline-block; width: 9px; height: 16px; background: var(--accent); margin-left: 4px; animation: blink 1s steps(1) infinite; vertical-align: middle; box-shadow: var(--glow); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+@media (max-width: 700px) {
+  #sidenav { width: 54px; }
+  #app, #bottombar { left: 54px; }
+  .page { padding: 40px 20px 60px; }
+  .about-grid, .soft-grid { grid-template-columns: 1fr; }
+  .cert-row { grid-template-columns: 52px 1fr; }
+  .cert-status { display: none; }
+  .status-pill { display: none; }
+}
+/* PROJECTS */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.project-card {
+  background: var(--panel);
+  padding: 28px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.project-card:hover {
+  background: #081d2a;
+}
+
+.project-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.4s;
+}
+
+.project-card:hover::after {
+  width: 100%;
+}
+
+.project-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.project-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.project-tags span {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<div id="overlay"></div>
+
+<!-- SIDE NAV -->
+<nav id="sidenav">
+  <div class="nav-logo">BP</div>
+  <button class="nav-btn active" data-page="home" onclick="goTo('home')">
+    <span class="ni">⌂</span><span class="nl">HOME</span>
+  </button>
+  <button class="nav-btn" data-page="about" onclick="goTo('about')">
+    <span class="ni">◎</span><span class="nl">ABOUT</span>
+  </button>
+  <button class="nav-btn" data-page="education" onclick="goTo('education')">
+    <span class="ni">▦</span><span class="nl">EDU</span>
+  </button>
+  <button class="nav-btn" data-page="projects" onclick="goTo('projects')">
+  <span class="ni">⬢</span><span class="nl">PROJECTS</span>
+</button>
+  <button class="nav-btn" data-page="skills" onclick="goTo('skills')">
+    <span class="ni">◈</span><span class="nl">SKILLS</span>
+  </button>
+  <button class="nav-btn" data-page="certs" onclick="goTo('certs')">
+    <span class="ni">✦</span><span class="nl">CERTS</span>
+  </button>
+  
+</nav>
+
+<div id="app">
+
+  <!-- PAGE 1: HOME -->
+  <div class="page active" id="page-home">
+    <div class="status-pill"><span class="status-dot"></span>AVAILABLE FOR OPPORTUNITIES</div>
+    <div class="hero-eyebrow" id="eyebrow"></div>
+    <h1 class="hero-name">BIBEK <span>POUDEL</span></h1>
+    <p class="hero-role">Ethical Hacking &amp; Cyber Defense<span class="cursor"></span></p>
+    <p class="hero-summary">Motivated and detail-oriented cybersecurity student with a strong foundation in networking, operating systems, and core security principles. Passionate about SOC workflows, incident response, and phishing prevention.</p>
+    <div class="hero-btns">
+      <button class="btn" onclick="goTo('skills')"><span>View Skills</span></button>
+      <button class="btn btn-dim" onclick="goTo('certs')"><span>Certifications</span></button>
+      
+    </div>
+    <div class="home-stats">
+      <div class="stat"><div class="stat-num">3</div><div class="stat-label">CERTIFICATIONS</div></div>
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">CORE MODULES</div></div>
+      <div class="stat"><div class="stat-num">2024</div><div class="stat-label">ENROLLED</div></div>
+      <div class="stat"><div class="stat-num">SOC</div><div class="stat-label">TARGET ROLE</div></div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: ABOUT -->
+  <div class="page" id="page-about">
+    <div class="page-num">02</div>
+    <div class="page-tag">// WHO_AM_I</div>
+    <h2 class="page-title">About Me</h2>
+    <div class="title-line"></div>
+    <div class="about-grid">
+      <div class="about-cell"><div class="cell-label">Full Name</div><div class="cell-value">Bibek Poudel</div><div class="cell-sub">bibekpoudel884@gmail.com</div></div>
+      <div class="about-cell"><div class="cell-label">Location</div><div class="cell-value">Lalitpur, Nepal</div><div class="cell-sub">+977 9849589898</div></div>
+      <div class="about-cell"><div class="cell-label">Current Status</div><div class="cell-value">Student + Job Seeker</div><div class="cell-sub">Open to Entry-Level SOC Roles</div></div>
+      <div class="about-cell"><div class="cell-label">Focus Area</div><div class="cell-value">SOC & Incident Response</div><div class="cell-sub">Threat Detection · Log Analysis · Phishing</div></div>
+    </div>
+    <div class="objective-box">
+      <p>Achieving an entry-level position in cybersecurity or Security Operations Centre (SOC) where I can utilize my technical skills, certifications, and analytical ability to identify and counteract cyber threats — while continuously building advanced incident response capabilities.</p>
+      <div class="corner-tag">// CAREER_OBJECTIVE</div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: EDUCATION -->
+  <div class="page" id="page-education">
+    <div class="page-num">03</div>
+    <div class="page-tag">// ACADEMIC_RECORD</div>
+    <h2 class="page-title">Education</h2>
+    <div class="title-line"></div>
+    <div class="edu-timeline">
+      <div class="edu-item">
+        <div class="edu-year">2024 — 2027 · CURRENTLY ENROLLED</div>
+        <div class="edu-card">
+          <div class="edu-degree">B.Sc. Ethical Hacking & Cyber Security</div>
+          <div class="edu-inst">Softwarica College of IT & E-Commerce, Kathmandu</div>
+          <div class="edu-affil">Affiliated with Coventry University, United Kingdom</div>
+          <div class="edu-mod-label">Relevant Modules</div>
+          <div class="edu-modules">
+            <span class="mod-chip">Network Security</span>
+            <span class="mod-chip">Ethical Hacking</span>
+            <span class="mod-chip">Digital Forensics</span>
+            <span class="mod-chip">Operating Systems</span>
+            <span class="mod-chip">Cyber Security Fundamentals</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: SKILLS -->
+  <div class="page" id="page-skills">
+    <div class="page-num">04</div>
+    <div class="page-tag">// CAPABILITIES</div>
+    <h2 class="page-title">Skills</h2>
+    <div class="title-line"></div>
+    <div class="skills-grid">
+      <div class="skill-card"><div class="skill-icon">🌐</div><div class="skill-cat">Networking</div><div class="skill-tags"><span class="stag">TCP/IP</span><span class="stag">DNS</span><span class="stag">HTTP/HTTPS</span><span class="stag">Traffic Analysis</span></div></div>
+      <div class="skill-card"><div class="skill-icon">🛡️</div><div class="skill-cat">Security Concepts</div><div class="skill-tags"><span class="stag">Incident Response</span><span class="stag">Threat Detection</span><span class="stag">Risk Assessment</span></div></div>
+      <div class="skill-card"><div class="skill-icon">🔧</div><div class="skill-cat">Tools & Techniques</div><div class="skill-tags"><span class="stag">Log Analysis</span><span class="stag">IDS/IPS</span><span class="stag">SIEM</span></div></div>
+      <div class="skill-card"><div class="skill-icon">💻</div><div class="skill-cat">Operating Systems</div><div class="skill-tags"><span class="stag">Linux</span><span class="stag">Windows</span></div></div>
+      <div class="skill-card"><div class="skill-icon">🔍</div><div class="skill-cat">Security Areas</div><div class="skill-tags"><span class="stag">SOC Operations</span><span class="stag">Phishing Prevention</span><span class="stag">Security Awareness</span></div></div>
+      <div class="skill-card"><div class="skill-icon">📋</div><div class="skill-cat">Documentation</div><div class="skill-tags"><span class="stag">Technical Writing</span><span class="stag">Report Analysis</span><span class="stag">Analytical Thinking</span></div></div>
+    </div>
+    <div class="soft-grid">
+      <div class="soft-item"><span class="soft-n">01</span><span class="soft-t">Analytical Thinking & Problem Solving</span></div>
+      <div class="soft-item"><span class="soft-n">02</span><span class="soft-t">Time Management & Continuous Learning</span></div>
+      <div class="soft-item"><span class="soft-n">03</span><span class="soft-t">Strong Communication & Documentation</span></div>
+      <div class="soft-item"><span class="soft-n">04</span><span class="soft-t">Team Collaboration & Adaptability</span></div>
+    </div>
+  </div>
+<!-- PAGE X: PROJECTS -->
+<div class="page" id="page-projects">
+  <div class="page-num">05</div>
+  <div class="page-tag">// PROJECTS</div>
+  <h2 class="page-title">Projects</h2>
+  <div class="title-line"></div>
+
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-title">Secure Message Chat System</div>
+      <div class="project-desc">
+        Developed a secure chat system using encryption techniques, focusing on confidentiality and secure communication between users.
+      </div>
+      <div class="project-tags">
+        <span>Python</span>
+        <span>Encryption</span>
+        <span>Sockets</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-title">FreeBooks Website</div>
+      <div class="project-desc">
+        A full-stack website with login system, features page, and database integration using PHP and MySQL.
+      </div>
+      <div class="project-tags">
+        <span>HTML</span>
+        <span>CSS</span>
+        <span>PHP</span>
+        <span>MySQL</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-title">Memory Allocation Simulator</div>
+      <div class="project-desc">
+        Implemented First Fit, Best Fit, and Worst Fit algorithms in C and analyzed performance differences.
+      </div>
+      <div class="project-tags">
+        <span>C</span>
+        <span>OS Concepts</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+  <!-- PAGE 5: CERTS -->
+  <div class="page" id="page-certs">
+    <div class="page-num">05</div>
+    <div class="page-tag">// CREDENTIALS</div>
+    <h2 class="page-title">Certifications</h2>
+    <div class="title-line"></div>
+    <div class="certs-list">
+      <div class="cert-row">
+        <div class="cert-badge">CPPS</div>
+        <div><div class="cert-name">Certified Phishing Prevention Specialist</div><div class="cert-detail">Hack & Fix · Issued December 2025</div></div>
+        <div class="cert-status">✓ VERIFIED</div>
+      </div>
+      <div class="cert-row">
+        <div class="cert-badge">CCEP</div>
+        <div><div class="cert-name">Certified Cybersecurity Educator Professional</div><div class="cert-detail">Red Team Leaders · November 2025 · ID: cfcf415f3dc6f4</div></div>
+        <div class="cert-status">✓ VERIFIED</div>
+      </div>
+      <div class="cert-row">
+        <div class="cert-badge">CRTOM</div>
+        <div><div class="cert-name">Certified Red Team Operations Management</div><div class="cert-detail">Red Team Leaders · Status: Passed</div></div>
+        <div class="cert-status">✓ PASSED</div>
+      </div>
+    </div>
+  </div>
+
+  
+
+<!-- BOTTOM BAR -->
+<div id="bottombar">
+  <div class="bar-item"><span class="bar-dot"></span><span>SYSTEM ONLINE</span></div>
+  <div class="bar-item">PAGE: <span id="bar-page">HOME</span></div>
+  <div class="bar-item">USER: <span>BIBEK_POUDEL</span></div>
+  <div class="bar-item">STATUS: <span>AVAILABLE</span></div>
+  <div class="bar-item" style="margin-left:auto">USE ← → KEYS TO NAVIGATE</div>
+</div>
+
+<script>
+const pages = ['home','about','education','skills','projects','certs','contact'];
+const pageNames = {
+  home:'HOME',
+  about:'ABOUT',
+  education:'EDUCATION',
+  skills:'SKILLS',
+  projects:'PROJECTS',
+  certs:'CERTIFICATIONS',
+  contact:'HOST + CONTACT'
+};let current = 'home';
+let busy = false;
+const overlay = document.getElementById('overlay');
+
+function goTo(id) {
+  if (id === current || busy) return;
+  busy = true;
+  overlay.style.transition = 'transform 0.22s ease-in';
+  overlay.style.transformOrigin = 'left';
+  overlay.style.transform = 'scaleX(1)';
+  setTimeout(() => {
+    document.getElementById('page-' + current).classList.remove('active');
+    document.getElementById('page-' + current).classList.add('exit');
+    setTimeout(() => document.getElementById('page-' + current).classList.remove('exit'), 400);
+    document.getElementById('page-' + id).classList.add('active');
+    document.getElementById('page-' + id).scrollTop = 0;
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-page="' + id + '"]').classList.add('active');
+    document.getElementById('bar-page').textContent = pageNames[id];
+    current = id;
+    overlay.style.transition = 'transform 0.22s ease-out';
+    overlay.style.transformOrigin = 'right';
+    overlay.style.transform = 'scaleX(0)';
+    setTimeout(() => { busy = false; overlay.style.transformOrigin = 'left'; }, 250);
+  }, 220);
+}
+
+document.addEventListener('keydown', e => {
+  const idx = pages.indexOf(current);
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(pages[Math.min(idx+1, pages.length-1)]);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(pages[Math.max(idx-1, 0)]);
+});
+
+// Typing effect
+const eyebrow = document.getElementById('eyebrow');
+const txt = 'Cybersecurity Student & SOC Analyst';
+let i = 0;
+function type() { if (i < txt.length) { eyebrow.textContent += txt[i++]; setTimeout(type, 45); } }
+setTimeout(type, 600);
+</script>
+</body>
+</html>
