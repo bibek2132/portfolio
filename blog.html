@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Bibek Poudel</title>
+<meta name="description" content="Cybersecurity blog by Bibek Poudel covering SOC operations, ethical hacking, incident response, and security awareness.">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #020a0f;
+  --panel: #071520;
+  --accent: #00ffe1;
+  --accent2: #0077ff;
+  --text: #c8e8f0;
+  --text-dim: #4a7a8a;
+  --border: rgba(0,255,225,0.15);
+  --glow: 0 0 20px rgba(0,255,225,0.35);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; min-height: 100%; background: var(--bg); font-family: 'Rajdhani', sans-serif; color: var(--text); cursor: crosshair; }
+
+.grid-bg { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(0,255,225,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,225,0.04) 1px, transparent 1px); background-size: 44px 44px; pointer-events: none; }
+.scanlines { position: fixed; inset: 0; z-index: 1; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px); pointer-events: none; }
+
+/* TOP NAV */
+#topnav {
+  position: fixed; top: 0; left: 0; right: 0; height: 64px; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(2,10,15,0.94);
+  backdrop-filter: blur(12px);
+}
+.nav-brand {
+  font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 900;
+  color: var(--accent); letter-spacing: 3px; text-shadow: var(--glow);
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 6px; }
+.nav-link {
+  font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; padding: 10px 18px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text-dim); cursor: pointer; transition: all 0.3s;
+  text-decoration: none;
+}
+.nav-link:hover, .nav-link.active {
+  border-color: var(--accent); color: var(--accent);
+  box-shadow: var(--glow); background: rgba(0,255,225,0.05);
+}
+
+/* MAIN CONTENT */
+.blog-wrapper {
+  position: relative; z-index: 2;
+  max-width: 900px; margin: 0 auto;
+  padding: 110px 40px 80px;
+}
+.page-tag { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; }
+.page-title { font-family: 'Orbitron', monospace; font-size: clamp(26px, 4vw, 42px); font-weight: 900; color: #fff; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 40px rgba(0,255,225,0.15); }
+.title-line { width: 56px; height: 2px; background: var(--accent); box-shadow: var(--glow); margin-top: 14px; margin-bottom: 20px; }
+.blog-subtitle { font-size: 16px; color: var(--text-dim); margin-bottom: 48px; max-width: 600px; line-height: 1.7; }
+
+/* FEATURED POST */
+.featured-post {
+  background: var(--panel); border: 1px solid var(--border);
+  padding: 0; margin-bottom: 48px; position: relative; overflow: hidden;
+  transition: border-color 0.3s; cursor: pointer;
+}
+.featured-post:hover { border-color: rgba(0,255,225,0.4); }
+.featured-label {
+  position: absolute; top: 20px; left: 20px; z-index: 5;
+  font-family: 'Share Tech Mono', monospace; font-size: 9px;
+  letter-spacing: 3px; color: var(--bg);
+  background: var(--accent); padding: 5px 14px;
+  box-shadow: var(--glow);
+}
+.featured-banner {
+  width: 100%; height: 220px;
+  background: linear-gradient(135deg, rgba(0,119,255,0.2), rgba(0,255,225,0.1));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 64px; position: relative; overflow: hidden;
+}
+.featured-banner::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, var(--panel));
+}
+.featured-body { padding: 32px 36px; }
+.featured-meta {
+  display: flex; gap: 20px; align-items: center; margin-bottom: 14px;
+}
+.post-date {
+  font-family: 'Share Tech Mono', monospace; font-size: 10px;
+  color: var(--accent); letter-spacing: 2px;
+}
+.post-category {
+  font-family: 'Share Tech Mono', monospace; font-size: 9px;
+  letter-spacing: 2px; color: var(--text-dim);
+  border: 1px solid var(--border); padding: 3px 10px;
+}
+.featured-title {
+  font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 700;
+  color: #fff; letter-spacing: 2px; margin-bottom: 14px; line-height: 1.4;
+}
+.featured-excerpt {
+  font-size: 15px; color: #8ab4c0; line-height: 1.8; margin-bottom: 20px;
+}
+.read-more {
+  font-family: 'Share Tech Mono', monospace; font-size: 11px;
+  color: var(--accent); letter-spacing: 3px;
+  display: flex; align-items: center; gap: 8px;
+}
+.read-more::after { content: '→'; transition: transform 0.3s; }
+.featured-post:hover .read-more::after { transform: translateX(6px); }
+
+/* BLOG GRID */
+.blog-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2px; background: var(--border); border: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.blog-card {
+  background: var(--panel); padding: 30px 28px;
+  transition: all 0.3s; position: relative; overflow: hidden; cursor: pointer;
+}
+.blog-card:hover { background: #081d2a; }
+.blog-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 0; height: 2px; background: var(--accent); transition: width 0.4s;
+}
+.blog-card:hover::after { width: 100%; }
+.card-num {
+  font-family: 'Orbitron', monospace; font-size: 28px; font-weight: 700;
+  color: rgba(0,255,225,0.08); margin-bottom: 14px;
+}
+.card-meta {
+  display: flex; gap: 14px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;
+}
+.card-title {
+  font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700;
+  color: #fff; letter-spacing: 1px; margin-bottom: 12px; line-height: 1.5;
+}
+.card-excerpt {
+  font-size: 14px; color: var(--text-dim); line-height: 1.7; margin-bottom: 18px;
+}
+.card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.card-tags span {
+  font-family: 'Share Tech Mono', monospace; font-size: 9px;
+  padding: 3px 9px; border: 1px solid var(--border); color: var(--text-dim);
+  letter-spacing: 1px; transition: all 0.2s;
+}
+.blog-card:hover .card-tags span { border-color: rgba(0,255,225,0.3); color: var(--text); }
+.card-read {
+  font-family: 'Share Tech Mono', monospace; font-size: 10px;
+  color: var(--accent); letter-spacing: 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+.card-read::after { content: '→'; transition: transform 0.3s; }
+.blog-card:hover .card-read::after { transform: translateX(4px); }
+
+/* NEWSLETTER */
+.newsletter-box {
+  background: var(--panel); border: 1px solid var(--border);
+  padding: 40px; position: relative; overflow: hidden; text-align: center;
+}
+.newsletter-box::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+}
+.newsletter-title {
+  font-family: 'Orbitron', monospace; font-size: 16px; font-weight: 700;
+  color: #fff; letter-spacing: 3px; margin-bottom: 10px;
+}
+.newsletter-desc {
+  font-size: 15px; color: var(--text-dim); margin-bottom: 24px; max-width: 400px; margin-left: auto; margin-right: auto;
+}
+.newsletter-form { display: flex; gap: 0; max-width: 460px; margin: 0 auto; }
+.newsletter-input {
+  flex: 1; padding: 12px 18px;
+  font-family: 'Share Tech Mono', monospace; font-size: 12px;
+  background: rgba(0,255,225,0.04); border: 1px solid var(--border);
+  color: var(--text); outline: none; letter-spacing: 1px;
+}
+.newsletter-input:focus { border-color: var(--accent); }
+.newsletter-input::placeholder { color: var(--text-dim); }
+.newsletter-btn {
+  font-family: 'Share Tech Mono', monospace; font-size: 11px;
+  letter-spacing: 3px; text-transform: uppercase;
+  padding: 12px 24px; border: 1px solid var(--accent); border-left: none;
+  color: var(--accent); background: transparent; cursor: pointer;
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.newsletter-btn:hover { background: var(--accent); color: var(--bg); }
+
+/* BOTTOM BAR */
+#bottombar {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 32px;
+  background: rgba(2,10,15,0.92); border-top: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 22px; gap: 22px; z-index: 100;
+}
+.bar-item { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 2px; display: flex; align-items: center; gap: 6px; }
+.bar-item span { color: var(--accent); }
+.bar-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 2s infinite; }
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.6s ease both; }
+.fade-up-1 { animation-delay: 0.1s; }
+.fade-up-2 { animation-delay: 0.2s; }
+.fade-up-3 { animation-delay: 0.3s; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+@media (max-width: 700px) {
+  .blog-wrapper { padding: 100px 18px 60px; }
+  #topnav { padding: 0 18px; }
+  .nav-links { gap: 4px; }
+  .nav-link { padding: 8px 10px; font-size: 9px; }
+  .featured-banner { height: 150px; }
+  .newsletter-form { flex-direction: column; }
+  .newsletter-btn { border-left: 1px solid var(--accent); border-top: none; }
+}
+.post-full-overlay{position:fixed;inset:0;z-index:500;background:rgba(2,10,15,0.97);overflow-y:auto;display:none;backdrop-filter:blur(6px)}
+.post-full-overlay.show{display:block}
+.post-full{max-width:740px;margin:0 auto;padding:80px 40px}
+.post-full-back{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:2px;cursor:pointer;margin-bottom:30px;display:inline-flex;align-items:center;gap:6px;border:none;background:none}
+.post-full-back:hover{text-decoration:underline}
+.post-full-cat{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dim);border:1px solid var(--border);padding:4px 12px;display:inline-block;margin-bottom:14px}
+.post-full-title{font-family:'Orbitron',monospace;font-size:clamp(20px,3vw,32px);font-weight:700;color:#fff;letter-spacing:2px;margin-bottom:12px;line-height:1.4}
+.post-full-date{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:2px;margin-bottom:8px}
+.post-full-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:28px}
+.post-full-tags span{font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 9px;border:1px solid var(--border);color:var(--text-dim);letter-spacing:1px}
+.post-full-line{width:100%;height:1px;background:var(--border);margin-bottom:28px}
+.post-full-content{font-size:16px;color:#9ec8d4;line-height:2;white-space:pre-wrap;font-family:'Rajdhani',sans-serif}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+
+<!-- TOP NAV -->
+<nav id="topnav">
+  <a href="index.html" class="nav-brand">BP // BLOG</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">← Portfolio</a>
+    <a href="blog.html" class="nav-link active">Blog</a>
+  </div>
+</nav>
+
+<div class="blog-wrapper">
+  <!-- HEADER -->
+  <div class="fade-up">
+    <div class="page-tag">// THREAT_INTEL_FEED</div>
+    <h1 class="page-title">Cyber Blog</h1>
+    <div class="title-line"></div>
+    <p class="blog-subtitle">Insights on cybersecurity, SOC operations, ethical hacking techniques, and lessons learned from the trenches of digital defense.</p>
+  </div>
+
+  <!-- DYNAMIC FEATURED POST -->
+  <div id="featured-container" class="fade-up fade-up-1"></div>
+
+  <!-- DYNAMIC BLOG GRID -->
+  <div id="blog-grid-container" class="fade-up fade-up-2"></div>
+
+  <!-- NEWSLETTER -->
+  <div class="newsletter-box fade-up fade-up-3">
+    <div class="newsletter-title">SUBSCRIBE TO THREAT FEED</div>
+    <p class="newsletter-desc">Get notified when I publish new cybersecurity insights and tutorials.</p>
+    <form class="newsletter-form" onsubmit="handleSubscribe(event)">
+      <input type="email" class="newsletter-input" placeholder="ENTER_EMAIL@DOMAIN.COM" required id="newsletter-email">
+      <button type="submit" class="newsletter-btn">SUBSCRIBE</button>
+    </form>
+  </div>
+</div>
+
+<!-- FULL POST OVERLAY -->
+<div class="post-full-overlay" id="post-overlay">
+  <div class="post-full" id="post-full-content"></div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div id="bottombar">
+  <div class="bar-item"><span class="bar-dot"></span><span>SYSTEM ONLINE</span></div>
+  <div class="bar-item">PAGE: <span>BLOG</span></div>
+  <div class="bar-item">USER: <span>BIBEK_POUDEL</span></div>
+  <div class="bar-item">POSTS: <span id="post-count">0</span></div>
+  <div class="bar-item" style="margin-left:auto">← BACK TO PORTFOLIO</div>
+</div>
+
+<script>
+// Default sample posts (shown when no admin posts exist)
+const defaultPosts = [
+  {id:'d1',title:'Building a Home SOC Lab: A Complete Guide for Beginners',category:'SOC OPERATIONS',tags:['Splunk','Wazuh','Detection'],content:'Setting up your own Security Operations Centre lab environment is one of the best ways to gain hands-on experience. In this guide, I walk through my setup using Splunk, Wazuh, and a network of vulnerable VMs to simulate real-world attack scenarios and practice detection engineering.\n\nThe first step is choosing your hypervisor. I recommend VirtualBox or VMware Workstation for beginners. Create a dedicated NAT network to isolate your lab from your home network.\n\nNext, deploy your SIEM. Splunk offers a free developer license, while Wazuh is fully open-source. Both are excellent choices for learning log analysis and alert creation.\n\nFinally, add vulnerable machines like DVWA, Metasploitable, and HackTheBox retired machines to generate realistic attack traffic for your detection rules.',createdAt:1718409600000,updatedAt:1718409600000,featured:true},
+  {id:'d2',title:'Anatomy of a Phishing Attack: What I Learned from Analyzing 500+ Emails',category:'PHISHING',tags:['Email Security','Social Engineering','OSINT'],content:'Breaking down common phishing patterns, header analysis techniques, and the red flags that most people miss in their inbox.\n\nAfter analyzing over 500 phishing emails collected from honeypot accounts, clear patterns emerged. The most common tactics include urgency-based subject lines, spoofed sender addresses with subtle misspellings, and embedded tracking pixels.\n\nKey indicators to look for: mismatched Reply-To headers, suspicious URL shorteners, and attachments with double extensions like .pdf.exe.',createdAt:1717804800000,updatedAt:1717804800000,featured:false},
+  {id:'d3',title:'Wireshark Deep Dive: Detecting Suspicious Traffic Patterns',category:'NETWORKING',tags:['Wireshark','Packet Analysis','Forensics'],content:'A practical walkthrough of using Wireshark for network forensics — identifying C2 beacons, DNS tunneling, and data exfiltration attempts.',createdAt:1716336000000,updatedAt:1716336000000,featured:false},
+  {id:'d4',title:'My First CTF Experience: Lessons from a Cybersecurity Competition',category:'INCIDENT RESPONSE',tags:['CTF','Problem Solving','Linux'],content:'Reflecting on my first Capture The Flag competition — the challenges faced, tools used, and key takeaways for aspiring ethical hackers.',createdAt:1715299200000,updatedAt:1715299200000,featured:false},
+  {id:'d5',title:'Why Every Student Needs Basic Cybersecurity Knowledge in 2026',category:'AWARENESS',tags:['Education','Awareness','Best Practices'],content:'Exploring why cybersecurity literacy should be as fundamental as digital literacy, with practical tips for students to protect themselves online.',createdAt:1714262400000,updatedAt:1714262400000,featured:false},
+  {id:'d6',title:'Getting Started with SIEM: Splunk vs Wazuh for Students',category:'TOOLS',tags:['SIEM','Splunk','Wazuh'],content:'A comparative analysis of two popular SIEM platforms from a student perspective — setup complexity, learning curve, and practical use cases.',createdAt:1712880000000,updatedAt:1712880000000,featured:false},
+  {id:'d7',title:'Understanding the MITRE ATT&CK Framework: A Practical Introduction',category:'ETHICAL HACKING',tags:['MITRE ATT&CK','Threat Intel','Defense'],content:'How the MITRE ATT&CK framework maps real-world adversary tactics, and how SOC analysts can use it to improve threat detection workflows.',createdAt:1711756800000,updatedAt:1711756800000,featured:false}
+];
+
+function getPosts() {
+  const stored = JSON.parse(localStorage.getItem('bp_blog_posts') || '[]');
+  return stored.length > 0 ? stored : defaultPosts;
+}
+function fmtDate(ts) {
+  const d = new Date(ts);
+  return d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
+}
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function getExcerpt(content, len) {
+  if (content.length <= len) return content;
+  return content.substring(0, len).trim() + '...';
+}
+
+function openPost(post) {
+  const overlay = document.getElementById('post-overlay');
+  const container = document.getElementById('post-full-content');
+  container.innerHTML = `
+    <button class="post-full-back" onclick="closePost()">← BACK TO BLOG</button>
+    <div class="post-full-date">${fmtDate(post.createdAt)}</div>
+    <div class="post-full-cat">${esc(post.category)}</div>
+    <div class="post-full-title">${esc(post.title)}</div>
+    <div class="post-full-tags">${post.tags.map(t => '<span>' + esc(t) + '</span>').join('')}</div>
+    <div class="post-full-line"></div>
+    <div class="post-full-content">${esc(post.content)}</div>
+  `;
+  overlay.classList.add('show');
+  overlay.scrollTop = 0;
+}
+function closePost() {
+  document.getElementById('post-overlay').classList.remove('show');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePost(); });
+
+function renderBlog() {
+  const posts = getPosts();
+  const featured = posts.find(p => p.featured) || posts[0];
+  const others = posts.filter(p => p.id !== featured.id);
+
+  document.getElementById('post-count').textContent = posts.length;
+
+  // Featured
+  document.getElementById('featured-container').innerHTML = `
+    <div class="featured-post" onclick='openPost(${JSON.stringify(featured).replace(/'/g,"&#39;")})'>
+      <div class="featured-label">FEATURED</div>
+      <div class="featured-banner">🛡️</div>
+      <div class="featured-body">
+        <div class="featured-meta">
+          <span class="post-date">${fmtDate(featured.createdAt)}</span>
+          <span class="post-category">${esc(featured.category)}</span>
+        </div>
+        <div class="featured-title">${esc(featured.title)}</div>
+        <p class="featured-excerpt">${esc(getExcerpt(featured.content, 240))}</p>
+        <div class="read-more">READ FULL ARTICLE</div>
+      </div>
+    </div>`;
+
+  // Grid
+  if (others.length > 0) {
+    document.getElementById('blog-grid-container').innerHTML = `
+      <div class="blog-grid">${others.map((p, i) => `
+        <div class="blog-card" onclick='openPost(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
+          <div class="card-num">${String(i+1).padStart(2,'0')}</div>
+          <div class="card-meta">
+            <span class="post-date">${fmtDate(p.createdAt)}</span>
+            <span class="post-category">${esc(p.category)}</span>
+          </div>
+          <div class="card-title">${esc(p.title)}</div>
+          <p class="card-excerpt">${esc(getExcerpt(p.content, 140))}</p>
+          <div class="card-tags">${p.tags.map(t => '<span>' + esc(t) + '</span>').join('')}</div>
+          <div class="card-read">READ MORE</div>
+        </div>`).join('')}
+      </div>`;
+  } else {
+    document.getElementById('blog-grid-container').innerHTML = '';
+  }
+}
+
+renderBlog();
+
+function handleSubscribe(e) {
+  e.preventDefault();
+  const input = document.getElementById('newsletter-email');
+  const btn = e.target.querySelector('.newsletter-btn');
+  btn.textContent = '✓ SUBSCRIBED';
+  btn.style.background = 'var(--accent)';
+  btn.style.color = 'var(--bg)';
+  input.value = '';
+  setTimeout(() => {
+    btn.textContent = 'SUBSCRIBE';
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 3000);
+}
+</script>
+</body>
+</html>

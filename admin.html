@@ -1,1 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Blog Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#020a0f;--panel:#071520;--accent:#00ffe1;--accent2:#0077ff;--text:#c8e8f0;--text-dim:#4a7a8a;--border:rgba(0,255,225,0.15);--glow:0 0 20px rgba(0,255,225,0.35);--danger:#ff3b5c}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text)}
+.grid-bg{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,255,225,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,225,0.04) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+.scanlines{position:fixed;inset:0;z-index:1;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none}
 
+/* LOGIN OVERLAY */
+#login-overlay{position:fixed;inset:0;z-index:1000;background:rgba(2,10,15,0.97);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.login-box{background:var(--panel);border:1px solid var(--border);padding:48px;width:380px;max-width:90vw;position:relative;overflow:hidden}
+.login-box::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),transparent)}
+.login-title{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--accent);letter-spacing:3px;margin-bottom:8px}
+.login-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-bottom:30px}
+.login-field{width:100%;padding:14px 18px;font-family:'Share Tech Mono',monospace;font-size:13px;background:rgba(0,255,225,0.04);border:1px solid var(--border);color:var(--text);outline:none;letter-spacing:2px;margin-bottom:16px}
+.login-field:focus{border-color:var(--accent)}
+.login-field::placeholder{color:var(--text-dim)}
+.login-btn{width:100%;padding:14px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;background:transparent;border:1px solid var(--accent);color:var(--accent);cursor:pointer;transition:all 0.3s}
+.login-btn:hover{background:var(--accent);color:var(--bg)}
+.login-error{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--danger);letter-spacing:1px;margin-top:12px;min-height:16px}
+
+/* TOP NAV */
+#topnav{position:fixed;top:0;left:0;right:0;height:64px;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid var(--border);background:rgba(2,10,15,0.94);backdrop-filter:blur(12px)}
+.nav-brand{font-family:'Orbitron',monospace;font-size:14px;font-weight:900;color:var(--accent);letter-spacing:3px;text-shadow:var(--glow);text-decoration:none}
+.nav-links{display:flex;gap:6px}
+.nav-link{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:10px 18px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.3s;text-decoration:none}
+.nav-link:hover,.nav-link.active{border-color:var(--accent);color:var(--accent);box-shadow:var(--glow);background:rgba(0,255,225,0.05)}
+
+/* ADMIN CONTENT */
+.admin-wrapper{position:relative;z-index:2;max-width:900px;margin:0 auto;padding:100px 40px 80px}
+.page-tag{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:4px;text-transform:uppercase;margin-bottom:10px}
+.page-title{font-family:'Orbitron',monospace;font-size:clamp(22px,3vw,36px);font-weight:900;color:#fff;letter-spacing:4px;text-transform:uppercase}
+.title-line{width:56px;height:2px;background:var(--accent);box-shadow:var(--glow);margin-top:14px;margin-bottom:36px}
+
+/* EDITOR */
+.editor-section{background:var(--panel);border:1px solid var(--border);padding:36px;margin-bottom:32px;position:relative;overflow:hidden}
+.editor-section::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2),transparent)}
+.editor-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px}
+.editor-input{width:100%;padding:12px 16px;font-family:'Share Tech Mono',monospace;font-size:13px;background:rgba(0,255,225,0.04);border:1px solid var(--border);color:var(--text);outline:none;letter-spacing:1px;margin-bottom:18px;transition:border-color 0.3s}
+.editor-input:focus{border-color:var(--accent)}
+.editor-input::placeholder{color:var(--text-dim)}
+textarea.editor-input{min-height:220px;resize:vertical;font-family:'Rajdhani',sans-serif;font-size:15px;line-height:1.8}
+.editor-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.editor-actions{display:flex;gap:10px;margin-top:8px}
+.btn-publish{padding:14px 32px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;background:transparent;border:1px solid var(--accent);color:var(--accent);cursor:pointer;transition:all 0.3s}
+.btn-publish:hover{background:var(--accent);color:var(--bg)}
+.btn-cancel{padding:14px 32px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;background:transparent;border:1px solid var(--text-dim);color:var(--text-dim);cursor:pointer;transition:all 0.3s}
+.btn-cancel:hover{background:var(--text-dim);color:var(--bg)}
+
+/* POST LIST */
+.posts-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.posts-count{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:2px}
+.post-item{background:var(--panel);border:1px solid var(--border);padding:22px 28px;margin-bottom:2px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px;transition:all 0.3s}
+.post-item:hover{background:#081d2a;border-color:rgba(0,255,225,0.3)}
+.post-item-title{font-family:'Orbitron',monospace;font-size:13px;color:#fff;letter-spacing:1px;margin-bottom:4px}
+.post-item-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:1px}
+.post-item-actions{display:flex;gap:8px}
+.btn-sm{padding:8px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.3s}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm.danger:hover{border-color:var(--danger);color:var(--danger)}
+.empty-state{text-align:center;padding:60px;background:var(--panel);border:1px solid var(--border)}
+.empty-icon{font-size:40px;margin-bottom:14px;opacity:0.3}
+.empty-text{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text-dim);letter-spacing:2px}
+
+/* TOAST */
+#toast{position:fixed;bottom:50px;left:50%;transform:translateX(-50%) translateY(80px);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:14px 28px;background:var(--accent);color:var(--bg);z-index:999;opacity:0;transition:all 0.4s;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:700px){
+  .admin-wrapper{padding:90px 16px 60px}
+  .editor-row{grid-template-columns:1fr}
+  #topnav{padding:0 16px}
+  .post-item{grid-template-columns:1fr}
+  .post-item-actions{margin-top:10px}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-title">ADMIN ACCESS</div>
+    <div class="login-sub">// AUTHENTICATION REQUIRED</div>
+    <input type="password" class="login-field" id="login-pass" placeholder="ENTER_PASSWORD" autofocus>
+    <button class="login-btn" onclick="attemptLogin()">AUTHENTICATE</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- TOP NAV -->
+<nav id="topnav">
+  <a href="blog.html" class="nav-brand">BP // ADMIN</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">← Portfolio</a>
+    <a href="blog.html" class="nav-link">Blog</a>
+    <a href="admin.html" class="nav-link active">Admin</a>
+  </div>
+</nav>
+
+<div class="admin-wrapper" id="admin-content" style="display:none;">
+  <div class="page-tag">// BLOG_MANAGER</div>
+  <h1 class="page-title">Write &amp; Manage Posts</h1>
+  <div class="title-line"></div>
+
+  <!-- EDITOR -->
+  <div class="editor-section" id="editor-section">
+    <div class="editor-label" id="editor-mode-label">NEW POST</div>
+    <input type="text" class="editor-input" id="post-title" placeholder="POST TITLE...">
+    <div class="editor-row">
+      <input type="text" class="editor-input" id="post-category" placeholder="CATEGORY (e.g. SOC, PHISHING)">
+      <input type="text" class="editor-input" id="post-tags" placeholder="TAGS (comma separated)">
+    </div>
+    <textarea class="editor-input" id="post-content" placeholder="Write your blog post content here..."></textarea>
+    <div class="editor-actions">
+      <button class="btn-publish" id="btn-publish" onclick="publishPost()">PUBLISH POST</button>
+      <button class="btn-cancel" id="btn-cancel" onclick="cancelEdit()" style="display:none;">CANCEL</button>
+    </div>
+  </div>
+
+  <!-- POSTS LIST -->
+  <div class="posts-header">
+    <div class="editor-label">PUBLISHED POSTS</div>
+    <div class="posts-count" id="posts-count">0 POSTS</div>
+  </div>
+  <div id="posts-list"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const ADMIN_PASS = 'bibek$100';
+let editingId = null;
+
+function attemptLogin() {
+  const pass = document.getElementById('login-pass').value;
+  if (pass === ADMIN_PASS) {
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    renderPosts();
+  } else {
+    document.getElementById('login-error').textContent = '✗ ACCESS DENIED — INVALID PASSWORD';
+    document.getElementById('login-pass').value = '';
+  }
+}
+document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
+
+function getPosts() {
+  return JSON.parse(localStorage.getItem('bp_blog_posts') || '[]');
+}
+function savePosts(posts) {
+  localStorage.setItem('bp_blog_posts', JSON.stringify(posts));
+}
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function fmtDate(ts) { const d = new Date(ts); return d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0'); }
+
+function publishPost() {
+  const title = document.getElementById('post-title').value.trim();
+  const category = document.getElementById('post-category').value.trim();
+  const tags = document.getElementById('post-tags').value.trim();
+  const content = document.getElementById('post-content').value.trim();
+  if (!title || !content) { showToast('✗ TITLE AND CONTENT REQUIRED'); return; }
+
+  const posts = getPosts();
+  if (editingId) {
+    const idx = posts.findIndex(p => p.id === editingId);
+    if (idx !== -1) {
+      posts[idx].title = title;
+      posts[idx].category = category || 'GENERAL';
+      posts[idx].tags = tags.split(',').map(t => t.trim()).filter(Boolean);
+      posts[idx].content = content;
+      posts[idx].updatedAt = Date.now();
+    }
+    editingId = null;
+    document.getElementById('btn-cancel').style.display = 'none';
+    document.getElementById('editor-mode-label').textContent = 'NEW POST';
+    document.getElementById('btn-publish').textContent = 'PUBLISH POST';
+    showToast('✓ POST UPDATED');
+  } else {
+    posts.unshift({
+      id: genId(),
+      title,
+      category: category || 'GENERAL',
+      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+      content,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      featured: posts.length === 0
+    });
+    showToast('✓ POST PUBLISHED');
+  }
+  savePosts(posts);
+  clearEditor();
+  renderPosts();
+}
+
+function editPost(id) {
+  const posts = getPosts();
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  editingId = id;
+  document.getElementById('post-title').value = post.title;
+  document.getElementById('post-category').value = post.category;
+  document.getElementById('post-tags').value = post.tags.join(', ');
+  document.getElementById('post-content').value = post.content;
+  document.getElementById('editor-mode-label').textContent = 'EDITING POST';
+  document.getElementById('btn-publish').textContent = 'UPDATE POST';
+  document.getElementById('btn-cancel').style.display = 'inline-block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deletePost(id) {
+  if (!confirm('Delete this post permanently?')) return;
+  const posts = getPosts().filter(p => p.id !== id);
+  savePosts(posts);
+  renderPosts();
+  showToast('✓ POST DELETED');
+}
+
+function toggleFeatured(id) {
+  const posts = getPosts();
+  posts.forEach(p => p.featured = (p.id === id));
+  savePosts(posts);
+  renderPosts();
+  showToast('✓ FEATURED POST UPDATED');
+}
+
+function cancelEdit() {
+  editingId = null;
+  clearEditor();
+  document.getElementById('editor-mode-label').textContent = 'NEW POST';
+  document.getElementById('btn-publish').textContent = 'PUBLISH POST';
+  document.getElementById('btn-cancel').style.display = 'none';
+}
+
+function clearEditor() {
+  document.getElementById('post-title').value = '';
+  document.getElementById('post-category').value = '';
+  document.getElementById('post-tags').value = '';
+  document.getElementById('post-content').value = '';
+}
+
+function renderPosts() {
+  const posts = getPosts();
+  const container = document.getElementById('posts-list');
+  document.getElementById('posts-count').textContent = posts.length + ' POST' + (posts.length !== 1 ? 'S' : '');
+  if (posts.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">✎</div><div class="empty-text">NO POSTS YET — WRITE YOUR FIRST ONE ABOVE</div></div>';
+    return;
+  }
+  container.innerHTML = posts.map(p => `
+    <div class="post-item">
+      <div>
+        <div class="post-item-title">${p.featured ? '★ ' : ''}${esc(p.title)}</div>
+        <div class="post-item-meta">${fmtDate(p.createdAt)} · ${esc(p.category)} · ${p.tags.map(t => esc(t)).join(', ')}</div>
+      </div>
+      <div class="post-item-actions">
+        <button class="btn-sm" onclick="toggleFeatured('${p.id}')">${p.featured ? '★ FEATURED' : '☆ FEATURE'}</button>
+        <button class="btn-sm" onclick="editPost('${p.id}')">EDIT</button>
+        <button class="btn-sm danger" onclick="deletePost('${p.id}')">DELETE</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
